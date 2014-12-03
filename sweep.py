@@ -17,11 +17,12 @@ FALSE = 0
 PRINTFOO = 1
 PRINTDIAG = 1
 
-ONSTATES = (1,2,3, 4)
+ONSTATES = (1,3, 4, 5)
 VARNAMES = 1
 LISTS = 2
 ALL = 3
 TEST1 = 4
+LINES = 5
 
 ##def nCk(n,k):
 ##    if n == 0 or k == 0:
@@ -32,7 +33,10 @@ TEST1 = 4
 ##    else:
 ##        return factorial(n)/(factorial(k)*factorial(n-k))
 
-
+def print3(onstate, *args):
+    if onstate in ONSTATES:
+        for arg in args:
+            print arg
 
 def print2(s, variables, onstate):
     if onstate in ONSTATES:
@@ -42,26 +46,24 @@ def print2(s, variables, onstate):
             print "~"+s+"~"
         print variables
         print "\n"
-    else:
-        print "no"
 
 
-def place_bombs(columns, rows, num_bombs):
+def place_bombs(rows, columns, num_bombs):
     if PRINTFOO: print "\n ---in place_bombs---"
-    bomb_columns = []
     bomb_rows = []
-    bomb_placement = random.sample(range(columns*rows), num_bombs)
+    bomb_columns = []
+    bomb_placement = random.sample(range(rows*columns), num_bombs)
     print2("bomb_placement", bomb_placement, LISTS)
 
     for item in bomb_placement:
-        bomb_columns.append(item%columns)
-        bomb_rows.append(item/columns)
+        bomb_rows.append(item%rows)
+        bomb_columns.append(item/rows)
 
 ##    for r in range(num_bombs):
-##        bomb_columns.append(random.randrange(columns))
 ##        bomb_rows.append(random.randrange(rows))
-    print2 ("*",("bomb_columns" , bomb_columns, "bomb_rows", bomb_rows), VARNAMES)
-    return bomb_columns, bomb_rows
+##        bomb_columns.append(random.randrange(columns))
+    print2 ("*",("bomb_rows" , bomb_rows, "bomb_columns", bomb_columns), VARNAMES)
+    return bomb_rows, bomb_columns
 
 
 def get_local(test_coord):
@@ -92,17 +94,17 @@ def count_bombs(test_coord, bombs):
             print2 ("bomb location:", bomb, 2)
     return count
 
-def make_grid((columns, rows), num_bombs):
-    if PRINTFOO: print "in make_grid. num columns, rows, bombs:", columns, rows, num_bombs
-##    grid = [range(rows) for i in range(columns)]
-    grid = [[{"bomb":FALSE, "clicked":FALSE} for r in range(rows)] for c in range(columns)]
-##    for column in range(columns):
-##        for row in range(rows):
+def make_grid((rows, columns), num_bombs):
+    if PRINTFOO: print "in make_grid. num rows, columns, bombs:", rows, columns, num_bombs
+##    grid = [range(columns) for i in range(rows)]
+    grid = [[{"bomb":FALSE, "clicked":FALSE} for r in range(columns)] for c in range(rows)]
+##    for column in range(rows):
+##        for row in range(columns):
 ##            grid[row, column] = {"bomb":0, "clicked":0}
 
     grid[0][1]['bomb'] = "yarp"
 
-    bomb_locs = place_bombs(columns, rows, num_bombs)
+    bomb_locs = place_bombs(rows, columns, num_bombs)
     bomb_coords = zip(bomb_locs[0], bomb_locs[1])
 
 
@@ -116,11 +118,27 @@ def make_grid((columns, rows), num_bombs):
     return grid
 
 def print_grid(grid):
-    for item in grid:
-        print item
+    string_list = [""]
+    for idx, val in enumerate(grid):
+        string_list[0]+=str(idx)
+        print "stringlist[0]", string_list[0]
+        print idx
+    for row in grid:
+        print2("",row, LISTS)
+        tempstring = ""
+        for column in row:
+            tempstring+="]["
+        string_list.append("["+tempstring+"]")
 
+        for idx, val in enumerate(row):
+               print "column number", idx, val
 
+        print3(LINES, ".........")
 
+    print [a for a, b in enumerate(grid)]
+
+    for string in string_list:
+        print "string" , string
 
 def main():
 
