@@ -11,8 +11,6 @@
 import random
 from math import factorial
 
-TRUE = 1
-FALSE = 0
 
 PRINTFOO = 1
 PRINTDIAG = 1
@@ -97,12 +95,12 @@ def count_bombs(test_coord, bombs):
 def make_grid((rows, columns), num_bombs):
     if PRINTFOO: print "in make_grid. num rows, columns, bombs:", rows, columns, num_bombs
 ##    grid = [range(columns) for i in range(rows)]
-    grid = [[{"bomb":FALSE, "clicked":FALSE} for r in range(columns)] for c in range(rows)]
+    grid = [[{"bomb":False, "clicked":False, "flagged":False} for r in range(columns)] for c in range(rows)]
 ##    for column in range(rows):
 ##        for row in range(columns):
 ##            grid[row, column] = {"bomb":0, "clicked":0}
 
-    grid[0][1]['bomb'] = "yarp"
+#    grid[0][1]['bomb'] = "yarp"
 
     bomb_locs = place_bombs(rows, columns, num_bombs)
     bomb_coords = zip(bomb_locs[0], bomb_locs[1])
@@ -112,11 +110,17 @@ def make_grid((rows, columns), num_bombs):
     print2 ("bomb_coords",  bomb_coords, ALL)
 
     for b in bomb_coords:
-        grid[b[0]][b[1]]['bomb'] = TRUE
+        grid[b[0]][b[1]]['bomb'] = True
         print b, grid[b[0]][b[1]]
 
-    return grid
+    
+	for r in range(rows):
+		for c in range(columns):			
+			grid[r][c]['number'] = count_bombs((r,c), bomb_coords) 
+			print "square", r, c, grid[r][c]['number']
 
+	return grid	
+	
 def print_grid(grid):
     string_list = [""]
     for idx, val in enumerate(grid):
@@ -129,6 +133,7 @@ def print_grid(grid):
         for column in row:
             tempstring+="]["
         string_list.append("["+tempstring+"]")
+
 
         for idx, val in enumerate(row):
                print "column number", idx, val
